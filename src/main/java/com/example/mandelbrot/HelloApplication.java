@@ -1,4 +1,4 @@
-package com.example.julia;
+package com.example.mandelbrot;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -1,4 +1,4 @@
-package com.example.julia;
+package com.example.mandelbrot;
 
 public class Complex {
     private double re, im;
@@ -38,21 +38,32 @@ public class Complex {
         this.im += other.im;
     }
 
+    public void setRe(double re){
+        this.re = re;
+    }
+
+    public void setIm(double im){
+        this.im = im;
+    }
+
     public void juliaTransform(Complex c){
         square(); add(c);
     }
 
     @Override
     public String toString(){
-        return String.format("[%.2f, %.2f]", re, im);
+        return String.format("[%.20f, %.20f]", re, im);
     }
 
     public double getMagnitude(){
         return Math.sqrt(re*re+im*im);
     }
 
-    public static void main(String[] args){
-        Complex c = Complex.of(3,4);
-        System.out.println(c.getMagnitude());
+    public double getMagnitudeSquared(){
+        return re*re+im*im;
+    }
+
+    public boolean isNaN(){
+        return Double.isNaN(re) && Double.isNaN(im);
     }
 }

@@ -1,8 +1,8 @@
-module com.example.julia {
+module com.example.mandelbrot {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens com.example.julia to javafx.fxml;
-    exports com.example.julia;
+    opens com.example.mandelbrot to javafx.fxml;
+    exports com.example.mandelbrot;
 }
