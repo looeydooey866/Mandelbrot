@@ -8,7 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 
-public class HelloController {
+public class MandelbrotController {
     @FXML
     private Canvas canvas;
     private int h,w;
@@ -19,7 +19,6 @@ public class HelloController {
     private MandelbrotSet mset;
 
     public Image pixelTest(int width, int height) {
-        //cool gradient :)
         WritableImage img = new WritableImage(width, height);
         PixelWriter pw = img.getPixelWriter();
         for (int y = 0; y < height; y++) {

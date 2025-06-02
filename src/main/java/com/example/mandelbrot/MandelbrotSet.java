@@ -21,7 +21,6 @@ public class MandelbrotSet {
 
         this.escapeThreshold = escapeThreshold;
 
-        //adsasdpufvbasdfuvbasdf fine i'll just do it the old fashioned way hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
         cset = new Complex[screenHeight][screenWidth];
         zset = new Complex[screenHeight][screenWidth];
         iterationsTaken = new int[screenHeight][screenWidth];
@@ -36,7 +35,6 @@ public class MandelbrotSet {
 
     public void zoom(Complex p, double percent){
         double factor = 1.0 - percent;
-        //so 0.9 percent per frame means that the new screen's length is 0.9x the previous one.
         double xrange = maxX - minX;
         double tlxd = p.getReal() - minX;
         minX += tlxd * factor;
