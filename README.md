@@ -5,7 +5,7 @@ A JavaFX Mandelbrot set renderer.
 
 # Why?
 
-Fractal look cool :)
+Fractal look cool
 
 # Zoom?
 
