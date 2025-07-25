@@ -8,13 +8,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 
+import java.nio.IntBuffer;
+
 public class MandelbrotController {
     @FXML
-    private Canvas canvas;
+    private ImageView canvas;
+    private int[] pixels;
+    private PixelBuffer<IntBuffer> pixelBuffer;
     private int h,w;
     private int iterations = 10;
-    GraphicsContext gc;
-    PixelWriter pw;
 
     private MandelbrotSet mset;
 
@@ -35,6 +37,7 @@ public class MandelbrotController {
         for (int y=0;y<h;y++){
             for (int x=0;x<w;x++){
                 int iter = mset.getIterationsTaken(y,x);
+                int color = 255 << 24;
                 if (iter < iterations){
                     Complex z = mset.getFinalZ(y,x);
                     double zx = z.getReal();
@@ -44,13 +47,16 @@ public class MandelbrotController {
                     double smoothIter = iter + 1 - nu;
                     double adjustedC = Math.pow(smoothIter, 0.2);
                     double hue = adjustedC * 240;
-                    pw.setColor(x, y, Color.hsb(hue, 1, 1));
+                    Color c = Color.hsb(hue,1,1);
+                    color = (255 << 24) |
+                            (((int)(c.getRed() * 255)) << 16) |
+                            (((int)(c.getGreen() * 255)) << 8) |
+                            (((int)(c.getBlue() * 255)));
                 }
-                else {
-                    pw.setColor(x,y,Color.BLACK);
-                }
+                pixels[y * w + x] = color;
             }
         }
+        pixelBuffer.updateBuffer(_ -> null);
     }
 
     public void drawMandelbrotSet(){
@@ -71,23 +77,28 @@ public class MandelbrotController {
                     c += freq[i];
                 }
                 c /= t;
+                int color = 255 << 24;
                 if (iters < iterations) {
-                    pw.setColor(x, y, Color.rgb(y*255/h, (int) (c * 255), x*255/w));
+                    color = (255 << 24) |
+                            (((y * 255) / h) << 16) |
+                            (((int)(c * 255)) << 8) |
+                            (((x * 255) / w));
                 }
-                else{
-                    pw.setColor(x,y,Color.BLACK);
-                }
+                pixels[y * w + x] = color;
             }
         }
+        pixelBuffer.updateBuffer(_ -> null);
     }
 
     @FXML
     public void initialize(){
         Platform.runLater(() -> {
-            h = (int)canvas.getHeight();
-            w = (int)canvas.getWidth();
-            gc = canvas.getGraphicsContext2D();
-            pw = gc.getPixelWriter();
+            h = (int)canvas.getFitHeight();
+            w = (int)canvas.getFitWidth();
+            IntBuffer intBuffer = IntBuffer.allocate(h*w);
+            pixels = intBuffer.array();
+            pixelBuffer = new PixelBuffer<>(w, h, intBuffer, PixelFormat.getIntArgbPreInstance());
+            canvas.setImage(new WritableImage(pixelBuffer));
             final double[] x = {-2.2, 0.8};
             final double[] y = {-1.12, 1.12};
             final Complex c = Complex.of(0,0);
@@ -107,9 +118,9 @@ public class MandelbrotController {
                 int my = (int)e.getY();
                 double[] b = mset.getBounds();
                 Complex g = Converter.real2argand(mx,my,w,h,b[0],b[1],b[2],b[3]);
-                //g = Complex.of(-0.77399186284233290000, 0.12030317200727936000);
                 System.err.println("Bing! You pressed on " + g + ".");
-                //g = Complex.of(-1.5,0);
+                g = Complex.of(-0.77399186284233290000, 0.12030317200727936000);
+                //g = Complex.of(-1.4,0);
                 c.setRe(g.getReal());
                 c.setIm(g.getImaginary());
                 a.stop();
